@@ -34,7 +34,7 @@ var DegreeConverterModel = new Class({
 		this.parent(key, value.toInt() || 0);
 	},
 	initialize: function(){
-		this.addEvent('didChange', function(key, value){
+		this.addEvent('change', function(key, value){
 			switch(key){
 				case 'fahrenheit': this.set('celsius', (value - 32) * 5/9); break;
 				case 'celsius': this.set('fahrenheit', (value * 9/5) + 32); break;
