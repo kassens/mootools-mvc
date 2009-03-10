@@ -9,25 +9,31 @@ View.create = function(specification){
 	return new Class({
 		Extends: View,
 		initialize: function(data){
-			this.element = new Element('div', {html: specification.html}).getFirst();
+			var element = new Element('div', {html: specification.html}).getFirst();
+			this.element = element;
+
+			var parseMapping = function(mapping){
+				mapping = mapping.split('@');
+				return {
+					element: mapping[0] ? element.getElement(mapping[0]) : element,
+					attribute: mapping[1]
+				};
+			};
+
 			if (specification.outlets) this.outlets = Hash.map(specification.outlets, function(mappings){
-				return $splat(mappings).map(function(mapping){
-					mapping = mapping.split('@');
-					return {
-						element: this.element.getElement(mapping[0]),
-						attribute: mapping[1]
-					};
-				}, this);
+				return $splat(mappings).map(parseMapping);
 			}, this);
+
 			if (specification.actions) Hash.each(specification.actions, function(mappings, action){
 				$splat(mappings).map(function(mapping){
-					mapping = mapping.split('@');
-					this.element.getElement(mapping[0]).addEvent(mapping[1], (function(event){
+					mapping = parseMapping(mapping);
+					mapping.element.addEvent(mapping.attribute, (function(event){
 						this.fireEvent(action, event);
 					}).bind(this));
 				}, this);
 			}, this);
-			this.set(data);
+
+			if (data) this.set(data);
 		},
 		set: function(key, value){
 			if (typeof key == 'object'){
