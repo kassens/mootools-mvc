@@ -1,0 +1,3 @@
+var Controller = new Class({
+	
+});
