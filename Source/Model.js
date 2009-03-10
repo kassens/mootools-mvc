@@ -18,6 +18,7 @@ var Model = new Class({
 	},
 	
 	connect: function(prop, other, otherProp){
+		other.set(otherProp, this.get(prop));
 		this.addEvent('change', function(key, value){
 			if (key == prop) other.set(otherProp, value);
 		});

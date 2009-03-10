@@ -33,13 +33,14 @@ var DegreeConverterModel = new Class({
 	set: function(key, value){
 		this.parent(key, value.toInt() || 0);
 	},
-	initialize: function(){
+	initialize: function(celsius){
 		this.addEvent('change', function(key, value){
 			switch(key){
 				case 'fahrenheit': this.set('celsius', (value - 32) * 5/9); break;
 				case 'celsius': this.set('fahrenheit', (value * 9/5) + 32); break;
 			}
 		});
+		this.set('celsius', celsius);
 	}
 });
 
@@ -47,7 +48,7 @@ var DegreeConverterModel = new Class({
 // = "Controller" =
 // ================
 window.addEvent('domready', function(){
-	var myConverter = new DegreeConverterModel();
+	var myConverter = new DegreeConverterModel(0);
 
 	var fInput = new MyInputView({id: 'fahrenheit', title: 'Fahrenheit'});
 	fInput.addEvent('valueChanged', function(){
@@ -66,5 +67,4 @@ window.addEvent('domready', function(){
 	myConverter.connect('fahrenheit', header, 'f');
 
 	$(document.body).adopt(header, fInput, cInput);
-	myConverter.set('fahrenheit', 0);
 });
