@@ -8,7 +8,7 @@ var Model = new Class({
 		if (value == oldValue) return;
 		// this.fireEvent('willChange', key); // TODO useful?
 		this.data[key] = value;
-		this.fireEvent('change', [key, value]);
+		this.fireEvent('change', [key, value]).fireEvent('change@' + key, [value]);
 		return this;
 	},
 
@@ -19,8 +19,8 @@ var Model = new Class({
 	
 	connect: function(prop, other, otherProp){
 		other.set(otherProp, this.get(prop));
-		this.addEvent('change', function(key, value){
-			if (key == prop) other.set(otherProp, value);
+		this.addEvent('change@' + prop, function(value){
+			other.set(otherProp, value);
 		});
 	}
 
