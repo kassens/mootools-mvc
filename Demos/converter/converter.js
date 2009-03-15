@@ -1,7 +1,9 @@
 // =========
 // = Views =
 // =========
-var MyInputView = View.create({
+var MyInputView = new Class({
+
+	Extends: View.HTML,
 
 	html:
 		'<div class="input">' +
@@ -21,7 +23,9 @@ var MyInputView = View.create({
 
 });
 
-var HeaderView = View.create({
+var HeaderView = new Class({
+
+	Extends: View.HTML,
 
 	html: '<h1><span class="fahrenheit"></span>&deg; Fahrenheit equals <span class="celsius"></span>&deg; Celsius<h1>',
 
