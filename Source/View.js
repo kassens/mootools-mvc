@@ -71,24 +71,27 @@ View.create = function(specification){
 				};
 			};
 
-			if (specification.outlets) Hash.each(specification.outlets, function(mappings, name){
-				$splat(mappings).map(function(mapping){
-					mapping = parseMapping(mapping);
-					this.addSetter(name, function(value){
-						mapping.element.set(mapping.attribute, value);
-					}).setGetter(name, function(){
-						return mapping.element.get(mapping.attribute);
-					}, true);
-				}, this);
+			var eachMapping = function(mappings, fn, bind){
+				if (mappings) Hash.each(mappings, function(mappings, name){
+					$splat(mappings).map(function(mapping){
+						mapping = parseMapping(mapping);
+						fn.call(this, name, mapping.element, mapping.attribute);
+					}, this);
+				}, bind);
+			};
+
+			eachMapping(specification.outlets, function(name, element, attribute){
+				this.addSetter(name, function(value){
+					element.set(attribute, value);
+				}).setGetter(name, function(){
+					return element.get(attribute);
+				}, true);
 			}, this);
 
-			if (specification.actions) Hash.each(specification.actions, function(mappings, action){
-				$splat(mappings).map(function(mapping){
-					mapping = parseMapping(mapping);
-					mapping.element.addEvent(mapping.attribute, (function(event){
-						this.fireEvent(action, event);
-					}).bind(this));
-				}, this);
+			eachMapping(specification.actions, function(name, element, attribute){
+				element.addEvent(attribute, (function(event){
+					this.fireEvent(name, event);
+				}).bind(this));
 			}, this);
 
 			if (data) this.set(data);
