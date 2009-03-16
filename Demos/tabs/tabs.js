@@ -1,3 +1,10 @@
+Element.implement({
+	disposeChildren: function(){
+		while (this.childNodes.length) this.removeChild(this.childNodes[0]);
+		return this;
+	}
+});
+
 // =========
 // = Views =
 // =========
@@ -6,32 +13,28 @@ var TabView = new Class({
 
 	Extends: View.HTML,
 
-	html: '<div class="tabview"><div class="tabview-tabs"></div></div>',
+	html: '<div class="tabview"><div class="tabview-tabs"></div><div class="tabview-content"></div></div>',
 
 	initialize: function(){
 		this.parent();
-		this.tabs = [];
 		this.tabsElement = this.element.getElement('.tabview-tabs');
+		this.contentElement = this.element.getElement('.tabview-content');
 	},
 
-	addTab: function(title, content){
-		var tab = new Element('span', {text: title, 'class': 'tabview-tab'});
-		this.tabs.push(tab);
-		content = new Element('div', {'class': 'tabview-content'}).grab(content);
-		
-		if (!this.activeTab) {
+	addTab: function(label, content){
+		var select = (function(){
+			if (this.activeTab) this.activeTab.removeClass('active');
 			this.activeTab = tab.addClass('active');
-			this.content = content.inject(this.element);
-		}
+			this.contentElement.disposeChildren().adopt(content);
+		}).bind(this);
 
-		tab.addEvent('click', (function(){
-			this.activeTab.removeClass('active');
-			this.activeTab = tab.addClass('active');
-			this.content.dispose();
-			this.content = content.inject(this.element);
-		}).bind(this));
+		var tab = new Element('span', {
+			'text': label,
+			'class': 'tabview-tab',
+			'events': {'click': select}
+		}).inject(this.tabsElement);
 
-		tab.inject(this.tabsElement);
+		if (!this.activeTab) select();
 	}
 
 });
