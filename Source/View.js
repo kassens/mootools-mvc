@@ -18,12 +18,6 @@ var View = new Class({
 		return this.element;
 	},
 
-	addOutlet: function(name, setter, getter){
-		this.addSetter(name, setter);
-		this.setGetter(name, getter);
-		return this;
-	},
-
 	addSetter: function(name, fn){
 		if (!this.setters[name]) this.setters[name] = [];
 		this.setters[name].push(fn);
